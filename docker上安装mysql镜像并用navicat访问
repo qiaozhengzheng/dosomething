@@ -1,0 +1,36 @@
+1、首先启动docker
+systemctl start docker
+2、拉取mysql镜像
+docker pull mysql
+如果下载特别慢，更改加速器，/etc/docker/daemon.json
+https://www.cnblogs.com/stulzq/p/8628019.html
+3、启动mysql镜像
+docker run -p 3308:3306 --name mysql -e MYSQL_ROOT_PASSWORD=123456 -d mysql
+容器名：mysql   密码：123321
+4、进入docker容器
+docker exec -it mysql bash
+5、进入mysql
+mysql -u root -p123321
+6、查看加密方式
+select host,user,plugin,authentication_string from mysql.user;
+7、如果有需要，更改加密方式
+ALTER USER 'root'@'%'
+  IDENTIFIED WITH mysql_native_password
+  BY 'root';
+( https://blog.csdn.net/shenhonglei1234/article/details/90602781 )
+8、进行授权操作
+grant all on *.* to 'root'@'%';
+( https://blog.csdn.net/u011490595/article/details/82050325 )
+9、如果改了加密方式，一定要重新设置下密码
+ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'root';（密码改为root）
+( https://blog.csdn.net/u011490595/article/details/82050325 )
+10、刷新权限
+flush privileges;
+11、其他原因排查
+    设置防火墙，firewall-cmd --permanent --zone=public --add-port=3306/tcp
+    firewall-cmd --reload 
+( https://blog.csdn.net/zsf_join/article/details/88551298 )
+( https://www.cnblogs.com/rxbook/p/8110143.html )
+    重启docker报错iptable的错解决
+https://blog.csdn.net/weixin_34357436/article/details/87954127
+https://blog.csdn.net/u013948858/article/details/83115388
